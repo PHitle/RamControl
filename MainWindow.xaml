@@ -1,0 +1,112 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="RAM Control 1.2" Width="1200" Height="780" MinWidth="1040" MinHeight="700" WindowStartupLocation="CenterScreen" Background="#10151F" Foreground="#E8EDF5" FontFamily="Segoe UI">
+  <Window.Resources>
+    <Style TargetType="TextBox">
+      <Setter Property="Background" Value="#1B2535" />
+      <Setter Property="Foreground" Value="#F1F5FC" />
+      <Setter Property="BorderBrush" Value="#344259" />
+      <Setter Property="Padding" Value="10,8" />
+      <Setter Property="FontSize" Value="15" />
+    </Style>
+    <Style TargetType="Button">
+      <Setter Property="Padding" Value="14,9" />
+      <Setter Property="Background" Value="#DCE8FF" />
+      <Setter Property="Foreground" Value="#102038" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style TargetType="DataGridColumnHeader">
+      <Setter Property="Background" Value="#202B3D" />
+      <Setter Property="Foreground" Value="#AAB8CE" />
+      <Setter Property="Padding" Value="12,10" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style TargetType="DataGridCell">
+      <Setter Property="Padding" Value="10,8" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Style.Triggers>
+        <Trigger Property="IsSelected" Value="True">
+          <Setter Property="Background" Value="#294B76" />
+          <Setter Property="Foreground" Value="White" />
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+    <Style TargetType="DataGridRow">
+      <Setter Property="Background" Value="#162030" />
+      <Setter Property="Foreground" Value="#E8EDF5" />
+    </Style>
+    <Style TargetType="GroupItem">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="GroupItem">
+            <StackPanel>
+              <Border Background="#111C2B" Padding="12,12">
+                <TextBlock Text="{Binding Name}" Foreground="#83B5FF" FontWeight="SemiBold" />
+              </Border>
+              <ItemsPresenter />
+            </StackPanel>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+  <Grid Margin="26">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <DockPanel Margin="0,0,0,18">
+      <StackPanel>
+        <TextBlock Text="RAM Control" FontSize="28" FontWeight="SemiBold" />
+        <TextBlock Text="Память процессов · Windows · 1.2" Foreground="#8E9DB4" Margin="0,5,0,0" x:Name="LocSubtitle" />
+      </StackPanel>
+      <TextBlock x:Name="Summary" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#8E9DB4" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <TextBlock x:Name="LanguageLabel" VerticalAlignment="Center" Margin="16,0,8,0" />
+        <ComboBox x:Name="LanguagePicker" Width="110" VerticalAlignment="Center">
+          <ComboBoxItem Tag="en" Content="English" />
+          <ComboBoxItem Tag="ru" Content="Русский" />
+        </ComboBox>
+      </StackPanel>
+    </DockPanel>
+    <TextBox x:Name="Search" Grid.Row="1" Margin="0,0,0,10" ToolTip="Поиск по имени или PID" />
+    <TextBlock Grid.Row="2" Text="RAM личная = private working set. Всего WS = личная + общая. Каждая строка — один PID; сравнивайте с вкладкой «Подробности»." TextWrapping="Wrap" Foreground="#8E9DB4" Margin="0,0,0,14" x:Name="LocHelp" />
+    <Grid Grid.Row="3">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="320" />
+      </Grid.ColumnDefinitions>
+      <DataGrid x:Name="Processes" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" HeadersVisibility="Column" GridLinesVisibility="None" RowHeaderWidth="0" BorderThickness="0" Background="#162030" HorizontalScrollBarVisibility="Auto" EnableRowVirtualization="True">
+        <DataGrid.GroupStyle>
+          <GroupStyle />
+        </DataGrid.GroupStyle>
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Процесс" Binding="{Binding Name}" Width="*" MinWidth="150" />
+          <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="70" />
+          <DataGridTextColumn Header="RAM личная, МБ" Binding="{Binding Ram, StringFormat=F1, TargetNullValue=—}" Width="130" />
+          <DataGridTextColumn Header="Всего WS, МБ" Binding="{Binding TotalRam, StringFormat=F1}" Width="120" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <Border Grid.Column="1" Background="#182131" CornerRadius="10" Margin="18,0,0,0" Padding="20">
+        <StackPanel>
+          <TextBlock Text="ПАРАМЕТРЫ ПРОЦЕССА" Foreground="#8E9DB4" FontSize="11" x:Name="LocParameters" />
+          <TextBlock x:Name="ProcessName" Text="Select a process" FontSize="21" FontWeight="SemiBold" Margin="0,12,0,4" TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="ProcessInfo" Text="Нажмите на строку слева" Foreground="#8E9DB4" Margin="0,0,0,18" TextWrapping="Wrap" />
+          <TextBlock Text="Min RAM" FontSize="15" />
+          <TextBlock Text="Мягкий минимум · МБ" Foreground="#8E9DB4" FontSize="11" Margin="0,3,0,8" x:Name="LocMinHint" />
+          <TextBox x:Name="MinRam" IsEnabled="False" />
+          <TextBlock Text="Max RAM" FontSize="15" Margin="0,18,0,0" />
+          <TextBlock Text="Жёсткий максимум всего WS · МБ" Foreground="#8E9DB4" FontSize="11" Margin="0,3,0,8" x:Name="LocMaxHint" />
+          <TextBox x:Name="MaxRam" IsEnabled="False" />
+          <Button x:Name="Apply" Content="Применить" Margin="0,20,0,10" IsEnabled="False" />
+          <Button x:Name="Restore" Content="Восстановить исходные" IsEnabled="False" />
+          <TextBlock Text="Лимиты относятся к столбцу «Всего WS». Min RAM не резервирует память. Низкий Max RAM может замедлить программу." TextWrapping="Wrap" Foreground="#8E9DB4" FontSize="12" Margin="0,22,0,0" x:Name="LocLimitsHelp" />
+        </StackPanel>
+      </Border>
+    </Grid>
+    <TextBlock x:Name="Status" Grid.Row="4" Text="Обновление каждые 2 секунды. «—» означает, что личная память недоступна. Поиск по имени или PID." Foreground="#9DB0CA" TextWrapping="Wrap" Margin="0,16,0,0" />
+  </Grid>
+</Window>
